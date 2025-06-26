@@ -49,15 +49,13 @@ def confirm_payment():
     conn.close()
     return jsonify({'message': 'Payment confirmed'}), 200
 
-@app.route('/release', methods=['POST'])
-def release_payment():
-    data = request.json
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("UPDATE transactions SET status = 'released' WHERE id = ?", (data['transaction_id'],))
-    conn.commit()
-    conn.close()
-    return jsonify({'message': 'Payment released'}), 200
+@app.route('/init', methods=['GET'])
+def initialize_database():
+    try:
+        init_db()
+        return jsonify({'message': 'Database initialized'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     init_db()
