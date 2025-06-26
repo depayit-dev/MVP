@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import sqlite3
 from datetime import datetime
-
+import os 
 app = Flask(__name__)
 DB_PATH = 'db.sqlite'
 
