@@ -18,17 +18,26 @@ def init_db():
     )''')
     conn.commit()
     conn.close()
-
 @app.route('/create', methods=['POST'])
 def create_transaction():
-    data = request.json
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("INSERT INTO transactions (buyer, seller, amount, status, created_at) VALUES (?, ?, ?, ?, ?)", 
-              (data['buyer'], data['seller'], data['amount'], 'pending', datetime.utcnow().isoformat()))
-    conn.commit()
-    conn.close()
-    return jsonify({'message': 'Transaction created'}), 201
+    data = request.get_json()
+
+    if not data or 'buyer' not in data or 'seller' not in data or 'amount' not in data:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(
+            "INSERT INTO transactions (buyer, seller, amount, status, created_at) VALUES (?, ?, ?, ?, ?)",
+            (data['buyer'], data['seller'], data['amount'], 'pending', datetime.utcnow().isoformat())
+        )
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Transaction created'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/confirm', methods=['POST'])
 def confirm_payment():
