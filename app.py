@@ -57,6 +57,21 @@ def initialize_database():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/release', methods=['POST'])
+def release_payment():
+    data = request.get_json()
+    if not data or 'transaction_id' not in data:
+        return jsonify({'error': 'Missing transaction_id'}), 400
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute("UPDATE transactions SET status = 'released' WHERE id = ?", (data['transaction_id'],))
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Payment released'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     init_db()
     port = int(os.environ.get("PORT", 10000))
