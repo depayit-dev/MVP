@@ -1,32 +1,26 @@
 from flask import Flask, request, jsonify
+import psycopg2
 from datetime import datetime
 import os
-import psycopg2
 
 app = Flask(__name__)
 DB_URL = os.environ.get("DATABASE_URL")
 
-@app.route('/init', methods=['POST'])
 def init_db():
-    try:
-        conn = psycopg2.connect(DB_URL)
-        c = conn.cursor()
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS transactions (
-                id SERIAL PRIMARY KEY,
-                buyer TEXT,
-                seller TEXT,
-                amount REAL,
-                status TEXT,
-                created_at TEXT
-            );
-        ''')
-        conn.commit()
-        conn.close()
-        print("✅ Database initialized.")
-    except Exception as e:
-        print("❌ Failed to initialize DB:", str(e)
-
+    conn = psycopg2.connect(DB_URL)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS transactions (
+            id SERIAL PRIMARY KEY,
+            buyer TEXT,
+            seller TEXT,
+            amount REAL,
+            status TEXT,
+            created_at TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 @app.route('/create', methods=['POST'])
 def create_transaction():
@@ -70,7 +64,15 @@ def release_payment():
         return jsonify({'message': 'Payment released'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-              
+
+@app.route('/init', methods=['GET'])
+def initialize_database():
+    try:
+        init_db()
+        return jsonify({'message': 'Database initialized'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     init_db()
     port = int(os.environ.get("PORT", 10000))
