@@ -48,16 +48,7 @@ def release_payment():
         return jsonify({'message': 'Payment released'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-@app.route('/init', methods=['GET'])
-def initialize_database():
-    try:
-        init_db()
-        return jsonify({'message': 'Database initialized'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
+        
 if __name__ == '__main__':
-    init_db()
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
