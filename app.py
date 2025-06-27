@@ -1,26 +1,10 @@
 from flask import Flask, request, jsonify
-import psycopg2
 from datetime import datetime
 import os
+import psycopg2
 
 app = Flask(__name__)
 DB_URL = os.environ.get("DATABASE_URL")
-
-def init_db():
-    conn = psycopg2.connect(DB_URL)
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS transactions (
-            id SERIAL PRIMARY KEY,
-            buyer TEXT,
-            seller TEXT,
-            amount REAL,
-            status TEXT,
-            created_at TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
 
 @app.route('/create', methods=['POST'])
 def create_transaction():
