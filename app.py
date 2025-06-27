@@ -1,24 +1,10 @@
 from flask import Flask, request, jsonify
-import sqlite3
+import psycopg2
 from datetime import datetime
 import os 
 
 app = Flask(__name__)
-DB_PATH = 'db.sqlite'
-
-def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        buyer TEXT,
-        seller TEXT,
-        amount REAL,
-        status TEXT,
-        created_at TEXT
-    )''')
-    conn.commit()
-    conn.close()
+DB_URL = os.environ.get("postgresql://postgres:[YOUR-PASSWORD]@db.rwdljazvebeusiirizaw.supabase.co:5432/postgres")  
 @app.route('/create', methods=['POST'])
 def create_transaction():
     data = request.get_json()
@@ -27,7 +13,7 @@ def create_transaction():
         return jsonify({'error': 'Missing required fields'}), 400
 
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = spsycopg2.connect(DB_URL)
         c = conn.cursor()
         c.execute(
             "INSERT INTO transactions (buyer, seller, amount, status, created_at) VALUES (?, ?, ?, ?, ?)",
@@ -43,7 +29,7 @@ def create_transaction():
 @app.route('/confirm', methods=['POST'])
 def confirm_payment():
     data = request.json
-    conn = sqlite3.connect(DB_PATH)
+    conn = psycopg2.connect(DB_PATH)
     c = conn.cursor()
     c.execute("UPDATE transactions SET status = 'confirmed' WHERE id = ?", (data['transaction_id'],))
     conn.commit()
@@ -64,7 +50,7 @@ def release_payment():
     if not data or 'transaction_id' not in data:
         return jsonify({'error': 'Missing transaction_id'}), 400
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = psycopg2.connect(DB_PATH)
         c = conn.cursor()
         c.execute("UPDATE transactions SET status = 'released' WHERE id = ?", (data['transaction_id'],))
         conn.commit()
