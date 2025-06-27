@@ -4,7 +4,7 @@ from datetime import datetime
 import os 
 
 app = Flask(__name__)
-DB_URL = os.environ.get("postgresql://postgres:[YOUR-PASSWORD]@db.rwdljazvebeusiirizaw.supabase.co:5432/postgres")  
+DB_URL = os.environ.get("DATABASE_URL")
 @app.route('/create', methods=['POST'])
 def create_transaction():
     data = request.get_json()
@@ -29,7 +29,7 @@ def create_transaction():
 @app.route('/confirm', methods=['POST'])
 def confirm_payment():
     data = request.json
-    conn = psycopg2.connect(DB_PATH)
+    conn = psycopg2.connect(DB_URL)
     c = conn.cursor()
     c.execute("UPDATE transactions SET status = 'confirmed' WHERE id = ?", (data['transaction_id'],))
     conn.commit()
@@ -50,7 +50,7 @@ def release_payment():
     if not data or 'transaction_id' not in data:
         return jsonify({'error': 'Missing transaction_id'}), 400
     try:
-        conn = psycopg2.connect(DB_PATH)
+        conn = psycopg2.connect(DB_URL)
         c = conn.cursor()
         c.execute("UPDATE transactions SET status = 'released' WHERE id = ?", (data['transaction_id'],))
         conn.commit()
