@@ -3,7 +3,11 @@ import psycopg2
 from datetime import datetime
 import os
 
+from kyc_verify import bp as kyc_bp
+
 app = Flask(__name__)
+app.register_blueprint(kyc_bp)
+
 DB_URL = os.environ.get("DATABASE_URL")
 
 def init_db():
