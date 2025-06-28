@@ -14,7 +14,13 @@ def verify_kyc():
             return jsonify({'error': 'Missing required image files'}), 400
 
         id_card = request.files['id_card_image']
-        selfie = request.files['selxc, 'selfie.jpg'))
+        selfie = request.files['selfie_image']
+
+        save_path = f"./uploads/kyc/{user_id}/"
+        os.makedirs(save_path, exist_ok=True)
+        id_card.save(os.path.join(save_path, 'id_card.jpg'))
+        selfie.save(os.path.join(save_path, 'selfie.jpg'))
+
         return jsonify({'message': 'KYC submitted'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
