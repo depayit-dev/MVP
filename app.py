@@ -4,7 +4,9 @@ from datetime import datetime
 import os
 
 from kyc_verify import bp as kyc_bp
+from view_transaction import view_tx
 
+app.register_blueprint(view_tx)
 app = Flask(__name__)
 app.register_blueprint(kyc_bp)
 
