@@ -1,8 +1,10 @@
-import psycopg2
+from supabase import create_client
 import os
+from dotenv import load_dotenv
 
-def get_db():
-    try:
-        return psycopg2.connect(os.environ.get("DATABASE_URL"))
-    except Exception as e:
-        raise Exception("Database connection failed: " + str(e))
+load_dotenv()  # โหลด .env ถ้ารัน local
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
