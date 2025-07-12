@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Depayit | สถานะธุรกรรม</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h2 class="mb-4">สถานะธุรกรรม</h2>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <p><strong>ชื่อผู้ซื้อ:</strong> {{ tx.buyer_name }}</p>
+        <p><strong>เบอร์ผู้ซื้อ:</strong> {{ tx.buyer_phone }}</p>
+        <p><strong>เบอร์ผู้ขาย:</strong> {{ tx.seller_phone }}</p>
+        <p><strong>จำนวนเงิน:</strong> ฿{{ tx.amount }}</p>
+        <p><strong>สถานะปัจจุบัน:</strong> <span class="badge bg-info">{{ tx.status }}</span></p>
+      </div>
+    </div>
+
+    {% if slip_url %}
+    <div class="mb-3">
+      <h5>📎 สลิปการโอน</h5>
+      <img src="{{ slip_url }}" alt="Slip" class="img-fluid border">
+    </div>
+    {% endif %}
+
+    {% if shipment %}
+    <div class="mb-3">
+      <h5>📦 ข้อมูลการจัดส่ง</h5>
+      <p><strong>Tracking:</strong> {{ shipment.tracking_number }}</p>
+      <img src="{{ shipment.image_url }}" alt="พัสดุ" class="img-fluid border">
+    </div>
+    {% endif %}
+
+    <p class="mt-4"><em>บทบาทของคุณ: {{ role }}</em></p>
+  </div>
+</body>
+</html>
